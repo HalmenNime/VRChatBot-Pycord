@@ -21,7 +21,7 @@ otPycord.zip
 ```
 
 ## Step 2:
-
+Install requirements
 ```bash
 pip install -r requirements.txt
 ```
