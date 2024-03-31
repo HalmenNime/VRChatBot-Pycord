@@ -16,27 +16,23 @@ if not os.path.exists(".env"):
     exit()
 
 
-if os.getenv("REPOSITORY_UPDATE_NOTIFICATION", True) == "True":
+if os.getenv("REPOSITORY_UPDATE_NOTIFICATION", True) == True:
     try:
         repo = git.Repo()
         origin = repo.remote()
-        origin.fetch(tags=True)
+        origin.fetch()
 
-        local_tags = [tag.name for tag in repo.tags]
-        remote_tags = [tag.name for tag in origin.refs]
+        local_version = repo.head.commit.hexsha
+        remote_version = origin.refs[0].commit.hexsha
 
-        latest_local_tag = max(local_tags) if local_tags else None
-        latest_remote_tag = max(remote_tags) if remote_tags else None
-
-        if latest_local_tag != latest_remote_tag:
-            print(f"There's an update in the repository. The latest version is {latest_remote_tag}, while your local version is {latest_local_tag}.")
-        else:
-            print("The repository is up to date.")
+        if local_version != remote_version:
+            commit_difference = len(list(origin.refs[0].commit.iter_items())) - len(list(repo.iter_commits()))
+            print(f"There's an update in repository, local repository is behind by {commit_difference} commits")
 
     except git.exc.InvalidGitRepositoryError:
-        print("This is not a valid Git repository.")
+        print("This is not a valid Git repository")
     except git.exc.GitCommandError as e:
-        print(f"Error retrieving updates from the remote repository: {e}")
+        print(f"Error retrieving updates from remote repository: {e}")
 
 
 language_emojis = {
