@@ -15,28 +15,28 @@ if not os.path.exists(".env"):
         print(colored("File .env was not find, create please and check example env in repository for copy and edit!", "yellow"))
     exit()
 
-def check_repository_updates():
-    if os.getenv("REPOSITORY_UPDATE_NOTIFICATION", True) == True:
-        try:
-            repo = git.Repo()
-            origin = repo.remote()
-            origin.fetch(tags=True)
 
-            local_tags = [tag.name for tag in repo.tags]
-            remote_tags = [tag.name for tag in origin.refs]
+if os.getenv("REPOSITORY_UPDATE_NOTIFICATION", True) == "True":
+    try:
+        repo = git.Repo()
+        origin = repo.remote()
+        origin.fetch(tags=True)
 
-            latest_local_tag = max(local_tags) if local_tags else None
-            latest_remote_tag = max(remote_tags) if remote_tags else None
+        local_tags = [tag.name for tag in repo.tags]
+        remote_tags = [tag.name for tag in origin.refs]
 
-            if latest_local_tag != latest_remote_tag:
-                print(f"There's an update in the repository. The latest version is {latest_remote_tag}, while your local version is {latest_local_tag}.")
-            else:
-                print("The repository is up to date.")
+        latest_local_tag = max(local_tags) if local_tags else None
+        latest_remote_tag = max(remote_tags) if remote_tags else None
 
-        except git.exc.InvalidGitRepositoryError:
-            print("This is not a valid Git repository.")
-        except git.exc.GitCommandError as e:
-            print(f"Error retrieving updates from the remote repository: {e}")
+        if latest_local_tag != latest_remote_tag:
+            print(f"There's an update in the repository. The latest version is {latest_remote_tag}, while your local version is {latest_local_tag}.")
+        else:
+            print("The repository is up to date.")
+
+    except git.exc.InvalidGitRepositoryError:
+        print("This is not a valid Git repository.")
+    except git.exc.GitCommandError as e:
+        print(f"Error retrieving updates from the remote repository: {e}")
 
 
 language_emojis = {
