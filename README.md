@@ -16,8 +16,7 @@ Before we begin, everything you see here is **not officially supported by VRChat
 ## Step 1:
 Download release and unzip manually
 ```bash
-curl -Lo VRChatBotPycord.zip https://github.com/HalmenNime/VRChatBot-Pycord/releases/latest/download/VRChatB
-otPycord.zip
+git clone https://github.com/HalmenNime/VRChatBot-Pycord.git
 ```
 
 ## Step 2:
