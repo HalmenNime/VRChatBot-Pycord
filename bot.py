@@ -15,23 +15,28 @@ if not os.path.exists(".env"):
         print(colored("File .env was not find, create please and check example env in repository for copy and edit!", "yellow"))
     exit()
 
-if os.getenv("REPOSITORY_UPDATE_NOTIFICATION", True) == True:
-    try:
-        repo = git.Repo()
-        origin = repo.remote()
-        origin.fetch()
+def check_repository_updates():
+    if os.getenv("REPOSITORY_UPDATE_NOTIFICATION", True) == True:
+        try:
+            repo = git.Repo()
+            origin = repo.remote()
+            origin.fetch(tags=True)
 
-        local_version = repo.head.commit.hexsha
-        remote_version = origin.refs[0].commit.hexsha
+            local_tags = [tag.name for tag in repo.tags]
+            remote_tags = [tag.name for tag in origin.refs]
 
-        if local_version != remote_version:
-            commit_difference = len(list(origin.refs[0].commit.iter_items())) - len(list(repo.iter_commits()))
-            print(f"There's an update in repository, local repository is behind by {commit_difference} commits")
+            latest_local_tag = max(local_tags) if local_tags else None
+            latest_remote_tag = max(remote_tags) if remote_tags else None
 
-    except git.exc.InvalidGitRepositoryError:
-        print("This is not a valid Git repository")
-    except git.exc.GitCommandError as e:
-        print(f"Error retrieving updates from remote repository: {e}")
+            if latest_local_tag != latest_remote_tag:
+                print(f"There's an update in the repository. The latest version is {latest_remote_tag}, while your local version is {latest_local_tag}.")
+            else:
+                print("The repository is up to date.")
+
+        except git.exc.InvalidGitRepositoryError:
+            print("This is not a valid Git repository.")
+        except git.exc.GitCommandError as e:
+            print(f"Error retrieving updates from the remote repository: {e}")
 
 
 language_emojis = {
