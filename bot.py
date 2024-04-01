@@ -16,7 +16,7 @@ if not os.path.exists(".env"):
     exit()
 
 
-if os.getenv("REPOSITORY_UPDATE_NOTIFICATION", True) == True:
+if os.getenv("REPOSITORY_UPDATE_NOTIFICATION", True) == "True":
     try:
         repo = git.Repo()
         origin = repo.remote()
