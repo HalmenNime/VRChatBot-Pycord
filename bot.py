@@ -1,10 +1,12 @@
 import discord
 from discord.ext import commands
+from termcolor import colored
+from datetime import datetime
 import requests
 import os
 import shutil
-from termcolor import colored
 import git
+
 
 
 if not os.path.exists(".env"):
@@ -101,10 +103,20 @@ async def profile(ctx, id = discord.Option(str, description="Check information a
         bio = data["bio"]
         last_platform = data["last_platform"]
         tags = data["tags"]
+        state = data["state"]
         langs = ','.join(language_emojis[tag] for tag in tags if tag in language_emojis) or "Not specified"
         
         if len(bio) < 1:
-            bio = 'None'
+            bio = 'Not specified'
+        
+        if state == "online":
+            state = "Online 🟢"
+        elif state == "offline":
+            state = "Offline 🔴"
+        elif state == "active":
+            state = "Active 🔵"
+        else:
+            state = f"{state} ❓"
 
         if last_platform == "standalonewindows":
             last_platform = f"Windows {platform_emojis['windows']}"
@@ -115,6 +127,7 @@ async def profile(ctx, id = discord.Option(str, description="Check information a
         
         embed = discord.Embed(title=f"Information about {username}", description=f"Bio: {bio}")
         embed.add_field(name="Platform:", value=last_platform, inline=False)
+        embed.add_field(name="State:", value=state, inline=False)
         embed.add_field(name="Languages:", value=langs, inline=False)
         embed.set_author(name="VRChat info", url="https://www.google.com/url?sa=i&url=https%3A%2F%2Fask.vrchat.com%2Ftag%2Fbug&psig=AOvVaw373wKWlf86aLr1OofimNsY&ust=1711971065371000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCKiK7qyznoUDFQAAAAAdAAAAABAJ")
         embed.set_thumbnail(url=currentAvatarThumbnail)
