@@ -37,6 +37,29 @@ if os.getenv("REPOSITORY_UPDATE_NOTIFICATION", "True") == "True":
         print(f"Error retrieving updates from remote repository: {e}")
 
 
+class WorldView(discord.ui.View):
+    def __init__(self, world_name, world_bio, world_image, world_favorites, world_visits, world_authorName):
+        super().__init__(timeout=10)
+    
+        self.world_name = world_name
+        self.world_bio = world_bio
+        self.world_image = world_image
+        self.world_favorites = world_favorites
+        self.world_visits = world_visits
+        self.world_authorName = world_authorName
+    
+    async def on_timeout(self):
+        self.disable_all_items()
+        await self.message.edit(view=self)
+    @discord.ui.button(label="Info World", style=discord.ButtonStyle.primary, emoji="🌆")
+    async def button_callback(self, button, interaction):
+        embed = discord.Embed(title=f"{self.world_name}", description=f"Description: {self.world_bio}", color=discord.Color.blue())
+        embed.add_field(name="Author", value=self.world_authorName, inline=False)
+        embed.add_field(name="Favorites", value=self.world_favorites, inline=False)
+        embed.add_field(name="Visits", value=self.world_visits, inline=False)
+        embed.set_thumbnail(url=self.world_image)
+        await interaction.response.send_message(embed=embed)
+
 language_emojis = {
     "language_rus": "🇷🇺",
     "language_eng": "🇬🇧",
@@ -88,6 +111,20 @@ async def get_info_user(id):
         "Cookie": f"auth={os.getenv('COOKIE_AUTH', 'YOUR_COOKIE_AUTH')}"
     }
     response = requests.get(url, headers=headers)
+    if os.getenv("DEBUG_API_RESPONSE_CONSOLE", "False") == "True":
+        print(response.json())
+
+    return response
+
+async def get_info_worldId(id):
+    url = f"https://api.vrchat.cloud/api/1/worlds/{id}"
+    headers = {
+        "User-Agent": "MyApp/1.0 (contact@example.com)",
+        "Cookie": f"auth={os.getenv('COOKIE_AUTH', 'YOUR_COOKIE_AUTH')}"
+    }
+    response = requests.get(url, headers=headers)
+    if os.getenv("DEBUG_API_RESPONSE_CONSOLE", "False") == "True":
+        print(response.json())
 
     return response
 
@@ -104,6 +141,7 @@ async def profile(ctx, id = discord.Option(str, description="Check information a
         last_platform = data["last_platform"]
         tags = data["tags"]
         state = data["state"]
+        view = None
         langs = ','.join(language_emojis[tag] for tag in tags if tag in language_emojis) or "Not specified"
         
         if len(bio) < 1:
@@ -111,6 +149,20 @@ async def profile(ctx, id = discord.Option(str, description="Check information a
         
         if state == "online":
             state = "Online 🟢"
+            worldID = data["worldId"]
+            if worldID != "offline":
+                world = await get_info_worldId(worldID)
+                data2 = world.json()
+                world_name = data2["name"]
+                state += f" (Playing in {world_name})"
+                world_bio = data2["description"]
+                world_image = data2["imageUrl"]
+                world_favorites = data2["favorites"]
+                world_visits = data2["visits"]
+                world_authorName = data2["authorName"]
+                view = WorldView(world_name=world_name, world_bio=world_bio, world_image=world_image, world_favorites=world_favorites, world_visits=world_visits, world_authorName=world_authorName)
+
+                
         elif state == "offline":
             state = "Offline 🔴"
         elif state == "active":
@@ -125,13 +177,13 @@ async def profile(ctx, id = discord.Option(str, description="Check information a
         else:
             last_platform = f"{last_platform} ❓"
         
-        embed = discord.Embed(title=f"Information about {username}", description=f"Bio: {bio}")
+        embed = discord.Embed(title=f"Information about {username}", description=f"Bio: {bio}", color=discord.Color.blue())
         embed.add_field(name="Platform:", value=last_platform, inline=False)
         embed.add_field(name="State:", value=state, inline=False)
         embed.add_field(name="Languages:", value=langs, inline=False)
         embed.set_author(name="VRChat info", url="https://www.google.com/url?sa=i&url=https%3A%2F%2Fask.vrchat.com%2Ftag%2Fbug&psig=AOvVaw373wKWlf86aLr1OofimNsY&ust=1711971065371000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCKiK7qyznoUDFQAAAAAdAAAAABAJ")
         embed.set_thumbnail(url=currentAvatarThumbnail)
-        await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed, view=view)
     
     elif response.status_code == 404:
         embed = discord.Embed(title="Error", description=f"User not found", color=discord.Color.red())
