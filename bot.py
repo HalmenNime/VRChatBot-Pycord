@@ -7,8 +7,6 @@ import os
 import shutil
 import git
 
-
-
 if not os.path.exists(".env"):
     if os.path.exists("example.env"):
         shutil.copy("example.env", ".env")
@@ -51,13 +49,16 @@ class WorldView(discord.ui.View):
     async def on_timeout(self):
         self.disable_all_items()
         await self.message.edit(view=self)
+    
     @discord.ui.button(label="Info World", style=discord.ButtonStyle.primary, emoji="🌆")
     async def button_callback(self, button, interaction):
+        
         embed = discord.Embed(title=f"{self.world_name}", description=f"Description: {self.world_bio}", color=discord.Color.blue())
         embed.add_field(name="Author", value=self.world_authorName, inline=False)
         embed.add_field(name="Favorites", value=self.world_favorites, inline=False)
         embed.add_field(name="Visits", value=self.world_visits, inline=False)
         embed.set_thumbnail(url=self.world_image)
+        
         await interaction.response.send_message(embed=embed)
 
 language_emojis = {
