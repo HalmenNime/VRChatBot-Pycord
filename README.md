@@ -40,9 +40,7 @@ python3 bot.py
 
 # Demo:
 
-![Image](https://media.discordapp.net/attachments/1211294385744904192/1224057432075145336/image.png?ex=661c1b51&is=6609a651&hm=5ede4ae74c775bfb3326dd057f921c90457a30f74dd974be60f6b4773860315f&=&format=webp&quality=lossless)
-
-![Image](https://media.discordapp.net/attachments/1211294385744904192/1224057474458583131/image.png?ex=661c1b5b&is=6609a65b&hm=684c55fc704dec23214a10e7499224da5bd71a9b995703c9c750134ff8d6ff2a&=&format=webp&quality=lossless)
+![Image](https://media.discordapp.net/attachments/1211294385744904192/1224057432075145336/image.png?ex=661c1b51&is=6609a651&hm=5ede4ae74c775bfb3326dd057f921c90457a30f74dd974be60f6b4773860315f&=&format=webp&quality=lossless](https://media.discordapp.net/attachments/1211294385744904192/1225498536225935392/image.png?ex=66215973&is=660ee473&hm=584887743e9b76a34275fc08bf0d55eaae62389b6bf5afa6110e7c8edce0b153&=&format=webp&quality=lossless))
 
 
 #### This is just my start, so there's not much to be had here, if you want to suggest something you can. More features coming soon.
