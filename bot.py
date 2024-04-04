@@ -36,7 +36,7 @@ if os.getenv("REPOSITORY_UPDATE_NOTIFICATION", "True") == "True":
 
 
 class WorldView(discord.ui.View):
-    def __init__(self, world_name, world_bio, world_image, world_favorites, world_visits, world_authorName):
+    def __init__(self, world_name, world_bio, world_image, world_favorites, world_visits, world_authorName, world_platform):
         super().__init__(timeout=10)
     
         self.world_name = world_name
@@ -45,6 +45,7 @@ class WorldView(discord.ui.View):
         self.world_favorites = world_favorites
         self.world_visits = world_visits
         self.world_authorName = world_authorName
+        self.world_platform = world_platform
     
     async def on_timeout(self):
         self.disable_all_items()
@@ -154,14 +155,18 @@ async def profile(ctx, id = discord.Option(str, description="Check information a
             if worldID != "offline":
                 world = await get_info_worldId(worldID)
                 data2 = world.json()
-                world_name = data2["name"]
-                state += f" (Playing in {world_name})"
-                world_bio = data2["description"]
-                world_image = data2["imageUrl"]
-                world_favorites = data2["favorites"]
-                world_visits = data2["visits"]
-                world_authorName = data2["authorName"]
-                view = WorldView(world_name=world_name, world_bio=world_bio, world_image=world_image, world_favorites=world_favorites, world_visits=world_visits, world_authorName=world_authorName)
+                if world.status_code == 404:
+                    state += f" (In a private world)"
+                else:
+                    world_name = data2["name"]
+                    state += f" (Playing in {world_name})"
+                    world_bio = data2["description"]
+                    world_image = data2["imageUrl"]
+                    world_favorites = data2["favorites"]
+                    world_visits = data2["visits"]
+                    world_authorName = data2["authorName"]
+                    world_platform = data2["unityPackages"]["platform"]
+                    view = WorldView(world_name=world_name, world_bio=world_bio, world_image=world_image, world_favorites=world_favorites, world_visits=world_visits, world_authorName=world_authorName, world_platform=world_platform)
 
                 
         elif state == "offline":
