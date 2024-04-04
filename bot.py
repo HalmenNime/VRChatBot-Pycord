@@ -152,22 +152,22 @@ async def profile(ctx, id = discord.Option(str, description="Check information a
         if state == "online":
             state = "Online 🟢"
             worldID = data["worldId"]
-            if worldID != "offline":
+            
+            if worldID == "private":
+                state += f" (In a private world)"
+            
+            elif worldID != "offline":
                 world = await get_info_worldId(worldID)
                 data2 = world.json()
-                if world.status_code == 404:
-                    state += f" (In a private world)"
-                else:
-                    world_name = data2["name"]
-                    state += f" (Playing in {world_name})"
-                    world_bio = data2["description"]
-                    world_image = data2["imageUrl"]
-                    world_favorites = data2["favorites"]
-                    world_visits = data2["visits"]
-                    world_authorName = data2["authorName"]
-                    world_platform = data2["unityPackages"]["platform"]
-                    view = WorldView(world_name=world_name, world_bio=world_bio, world_image=world_image, world_favorites=world_favorites, world_visits=world_visits, world_authorName=world_authorName, world_platform=world_platform)
-
+                world_name = data2["name"]
+                state += f" (Playing in {world_name})"
+                world_bio = data2["description"]
+                world_image = data2["imageUrl"]
+                world_favorites = data2["favorites"]
+                world_visits = data2["visits"]
+                world_authorName = data2["authorName"]
+                world_platform = data2["unityPackages"]["platform"]
+                view = WorldView(world_name=world_name, world_bio=world_bio, world_image=world_image, world_favorites=world_favorites, world_visits=world_visits, world_authorName=world_authorName, world_platform=world_platform)
                 
         elif state == "offline":
             state = "Offline 🔴"
