@@ -51,15 +51,30 @@ class WorldView(discord.ui.View):
         await self.message.edit(view=self)
     
     @discord.ui.button(label="Info World", style=discord.ButtonStyle.primary, emoji="🌆")
-    async def button_callback(self, button, interaction):
+    async def button1_callback(self, button, interaction):
         
+        button.disabled = True
+        if self.button2_callback.disabled:
+            self.button2_callback.disabled = False
         embed = discord.Embed(title=f"{self.world_name}", description=f"Description: {self.world_bio}", color=discord.Color.blue())
         embed.add_field(name="Author", value=self.world_authorName, inline=False)
         embed.add_field(name="Favorites", value=self.world_favorites, inline=False)
         embed.add_field(name="Visits", value=self.world_visits, inline=False)
         embed.set_thumbnail(url=self.world_image)
-        
+
+        await self.message.edit(view=self)
         await interaction.response.send_message(embed=embed)
+    
+    @discord.ui.button(label="Instance", style=discord.ButtonStyle.primary, emoji="🌆")
+    async def button2_callback(self, button, interaction):
+        
+        button.disabled = True
+        if self.button1_callback.disabled:
+            self.button1_callback.disabled = False
+        
+
+        await self.message.edit(view=self)
+        await interaction.response.send_message("Comming soon")
 
 language_emojis = {
     "language_rus": "🇷🇺",
