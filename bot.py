@@ -65,7 +65,7 @@ class WorldView(discord.ui.View):
         await self.message.edit(view=self)
         await interaction.response.send_message(embed=embed)
     
-    @discord.ui.button(label="Instance", style=discord.ButtonStyle.primary, emoji="🌆")
+    @discord.ui.button(label="Instance", style=discord.ButtonStyle.primary, emoji="🌌")
     async def button2_callback(self, button, interaction):
         
         button.disabled = True
