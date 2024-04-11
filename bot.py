@@ -36,7 +36,7 @@ if os.getenv("REPOSITORY_UPDATE_NOTIFICATION", "True") == "True":
 
 
 class WorldView(discord.ui.View):
-    def __init__(self, world_name, world_bio, world_image, world_favorites, world_visits, world_authorName):
+    def __init__(self, world_name, world_bio, world_image, world_favorites, world_visits, world_authorName, instance_region):
         super().__init__(timeout=10)
     
         self.world_name = world_name
@@ -45,6 +45,7 @@ class WorldView(discord.ui.View):
         self.world_favorites = world_favorites
         self.world_visits = world_visits
         self.world_authorName = world_authorName
+        self.instance_region = instance_region
     
     async def on_timeout(self):
         self.disable_all_items()
@@ -72,9 +73,11 @@ class WorldView(discord.ui.View):
         if self.button1_callback.disabled:
             self.button1_callback.disabled = False
         
+        embed = discord.Embed(title=f"Instance", description=f"Region: {self.instance_region}", color=discord.Color.blue())
+        
 
         await self.message.edit(view=self)
-        await interaction.response.send_message("Comming soon")
+        await interaction.response.send_message(embed=embed)
 
 language_emojis = {
     "language_rus": "🇷🇺",
@@ -128,6 +131,7 @@ async def get_info_user(id):
     }
     response = requests.get(url, headers=headers)
     if os.getenv("DEBUG_API_RESPONSE_CONSOLE", "False") == "True":
+        print(colored("-----------------------------------------------INFO_USER-----------------------------------------------", "blue"))
         print(response.json())
 
     return response
@@ -140,6 +144,20 @@ async def get_info_worldId(id):
     }
     response = requests.get(url, headers=headers)
     if os.getenv("DEBUG_API_RESPONSE_CONSOLE", "False") == "True":
+        print(colored("-----------------------------------------------INFO_WORLD-----------------------------------------------", "blue"))
+        print(response.json())
+
+    return response
+
+async def get_info_instanceId(worldId, instanceId):
+    url = f"https://api.vrchat.cloud/api/1/instances/{worldId}:{instanceId}"
+    headers = {
+        "User-Agent": "MyApp/1.0 (contact@example.com)",
+        "Cookie": f"auth={os.getenv('COOKIE_AUTH', 'YOUR_COOKIE_AUTH')}"
+    }
+    response = requests.get(url, headers=headers)
+    if os.getenv("DEBUG_API_RESPONSE_CONSOLE", "False") == "True":
+        print(colored("-----------------------------------------------INFO_INSTANCE-----------------------------------------------", "blue"))
         print(response.json())
 
     return response
@@ -157,6 +175,7 @@ async def profile(ctx, id = discord.Option(str, description="Check information a
         last_platform = data["last_platform"]
         tags = data["tags"]
         state = data["state"]
+        instanceId = data["instanceId"]
         view = None
         langs = ','.join(language_emojis[tag] for tag in tags if tag in language_emojis) or "Not specified"
         
@@ -176,6 +195,8 @@ async def profile(ctx, id = discord.Option(str, description="Check information a
             elif worldID != "offline":
                 world = await get_info_worldId(worldID)
                 data2 = world.json()
+                instance = await get_info_instanceId(worldID, instanceId)
+                data3 = instance.json()
                 world_name = data2["name"]
                 state += f" (Playing in {world_name})"
                 world_bio = data2["description"]
@@ -183,8 +204,19 @@ async def profile(ctx, id = discord.Option(str, description="Check information a
                 world_favorites = data2["favorites"]
                 world_visits = data2["visits"]
                 world_authorName = data2["authorName"]
-                view = WorldView(world_name=world_name, world_bio=world_bio, world_image=world_image, world_favorites=world_favorites, world_visits=world_visits, world_authorName=world_authorName)
+                instance_region = data3["region"]
                 
+                view = WorldView(world_name=world_name,
+                                 world_bio=world_bio,
+                                 world_image=world_image,
+                                 world_favorites=world_favorites,
+                                 world_visits=world_visits,
+                                 world_authorName=world_authorName,
+                                 instance_region=instance_region)
+                
+
+                
+
         elif state == "offline":
             state = "Offline 🔴"
         elif state == "active":
