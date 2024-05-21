@@ -40,7 +40,8 @@ python3 bot.py
 
 # Demo:
 
-![Image](https://media.discordapp.net/attachments/1211294385744904192/1225498992108900372/image.png?ex=662159e0&is=660ee4e0&hm=3f7992056f8c4e88212baa539bf5f04f16940d38984cdc02349c2d99425ceae4&=&format=webp&quality=lossless&width=553&height=670)
+![image](https://github.com/HalmenNime/VRChatBot-Pycord/assets/113983409/e4d81a25-ab1a-4993-aed5-93b219738b28)
+
 
 
 #### This is just my start, so there's not much to be had here, if you want to suggest something you can. More features coming soon.
