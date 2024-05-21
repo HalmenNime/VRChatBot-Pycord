@@ -235,7 +235,7 @@ async def profile(ctx, id = discord.Option(str, description="Check information a
         embed.add_field(name="Platform:", value=last_platform, inline=False)
         embed.add_field(name="State:", value=state, inline=False)
         embed.add_field(name="Languages:", value=langs, inline=False)
-        embed.set_author(name="VRChat info", url="https://www.google.com/url?sa=i&url=https%3A%2F%2Fask.vrchat.com%2Ftag%2Fbug&psig=AOvVaw373wKWlf86aLr1OofimNsY&ust=1711971065371000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCKiK7qyznoUDFQAAAAAdAAAAABAJ")
+        embed.set_author(name="VRChat info", url="https://asset.brandfetch.io/id_v0vCj-M/idPUBFdgwB.jpeg")
         embed.set_thumbnail(url=currentAvatarThumbnail)
         await ctx.respond(embed=embed, view=view)
     
