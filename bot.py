@@ -227,7 +227,7 @@ async def profile(ctx, id = discord.Option(str, description="Check information a
         if last_platform == "standalonewindows":
             last_platform = f"Windows {platform_emojis['windows']}"
         elif last_platform == "android":
-            last_platform = f"Android {platform_emojis['android']} or Quest {platform_emojis['quest']}"
+            last_platform = f"Android {platform_emojis['android']} (Mobile or VR Headset)"
         else:
             last_platform = f"{last_platform} ❓"
         
